@@ -1,0 +1,166 @@
+/* Image Master Plugin Styles */
+
+/* Gallery Container */
+.image-master-gallery-container {
+  height: 100%;
+  overflow: hidden;
+}
+
+.image-master-gallery {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--background-primary);
+}
+
+/* Header */
+.gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.gallery-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.gallery-refresh-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-refresh-btn:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+/* Search */
+.gallery-search {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.gallery-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  font-size: 13px;
+}
+
+.gallery-search-input:focus {
+  outline: none;
+  border-color: var(--interactive-accent);
+  box-shadow: 0 0 0 2px var(--interactive-accent-hover);
+}
+
+.gallery-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Content */
+.gallery-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gallery-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.gallery-loading,
+.gallery-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* Image Grid Container */
+.image-grid {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+/* Footer */
+.gallery-footer {
+  padding: 8px 12px;
+  border-top: 1px solid var(--background-modifier-border);
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Filter Tabs */
+.filter-tab:hover {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+/* Info Panel */
+.info-panel {
+  transition: width 0.2s ease;
+}
+
+.info-panel button:hover {
+  background: var(--background-modifier-hover);
+}
+
+/* Scrollbar */
+.image-master-gallery ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.image-master-gallery ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.image-master-gallery ::-webkit-scrollbar-thumb {
+  background: var(--background-modifier-border);
+  border-radius: 4px;
+}
+
+.image-master-gallery ::-webkit-scrollbar-thumb:hover {
+  background: var(--background-modifier-border-hover);
+}
+
+/* Image Grid Item hover effects */
+.image-grid-item {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.image-grid-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.image-grid-item.selected {
+  transform: scale(1.02);
+  box-shadow: 0 0 0 2px var(--interactive-accent);
+}
+
+/* Drag feedback */
+.image-grid-item:active {
+  opacity: 0.7;
+}
