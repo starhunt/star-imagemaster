@@ -1,10 +1,10 @@
 # Image Master PRD (Product Requirements Document)
 
 ## 문서 정보
-- **버전**: 2.2
+- **버전**: 2.3
 - **원본 기반**: Image Master 개발 계획서 v1.0 (2025.12.25)
 - **UI 프레임워크**: React (원본 Svelte에서 변경)
-- **최종 업데이트**: 2026.01.12
+- **최종 업데이트**: 2026.01.13
 
 ---
 
@@ -33,10 +33,15 @@ Obsidian 사용자의 이미지 관리 경험을 통합하는 올인원 플러�
 ### 2.2 통합 이미지 갤러리
 | 항목 | 상세 |
 |------|------|
+| 뷰 모드 | 그리드 뷰 / 리스트 뷰 전환 지원 |
 | 썸네일 뷰 | 그리드 레이아웃, 가상화 스크롤링 (대용량 대응) |
+| 리스트 뷰 | 테이블 형식, 컬럼 정렬 (이름/크기/날짜/폴더) |
 | 드래그 & 드롭 | 갤러리 → 에디터로 이미지 삽입 |
 | 역참조 | 이미지 클릭 시 사용 중인 노트 목록 표시 |
-| 필터 탭 | 전체 / 사용 중 / 고아 이미지 분류 |
+| 필터 탭 | 전체 / 사용 중 / 고아 이미지 분류 (개수 표시) |
+| 다중 선택 | Ctrl+클릭(토글), Shift+클릭(범위), Ctrl+A(전체) |
+| 벌크 작업 | 선택 이미지 일괄 삭제/이동 (ActionToolbar) |
+| 정렬 | 이름, 크기, 생성일, 수정일, 폴더별 정렬 |
 
 ### 2.3 지능형 중복 감지
 | 항목 | 상세 |
@@ -237,11 +242,17 @@ star-imagemaster/
 │   │   └── OrphanDetector.ts   # 고아 이미지 감지
 │   ├── ui/
 │   │   ├── GalleryView.tsx     # 메인 갤러리 뷰
-│   │   └── components/
-│   │       ├── GalleryContainer.tsx
-│   │       ├── ImageGrid.tsx
-│   │       ├── InfoPanel.tsx
-│   │       └── FilterTabs.tsx
+│   │   ├── components/
+│   │   │   ├── GalleryContainer.tsx  # 갤러리 메인 컨테이너
+│   │   │   ├── ImageGrid.tsx         # 그리드 뷰 (다중 선택 지원)
+│   │   │   ├── ImageList.tsx         # 리스트 뷰 (테이블 형식)
+│   │   │   ├── InfoPanel.tsx         # 이미지 정보 패널
+│   │   │   ├── FilterTabs.tsx        # 필터 탭 (전체/사용중/고아)
+│   │   │   ├── ActionToolbar.tsx     # 벌크 작업 툴바
+│   │   │   ├── ViewModeToggle.tsx    # 그리드/리스트 뷰 전환
+│   │   │   └── SortDropdown.tsx      # 정렬 드롭다운
+│   │   └── modals/
+│   │       └── FolderSuggestModal.ts # 폴더 선택 모달
 │   └── types/                  # TypeScript 타입 정의
 ├── styles/                     # CSS 스타일
 ├── manifest.json
@@ -257,9 +268,13 @@ star-imagemaster/
 |--------|------|
 | `Ctrl/Cmd + Shift + G` | 갤러리 열기 |
 | 갤러리 내 `Arrow` | 이미지 탐색 |
-| 갤러리 내 `Enter` | 이미지 삽입 |
-| 갤러리 내 `Delete` | 삭제 (고아인 경우) |
+| 갤러리 내 `Enter` / `Space` | 이미지 선택 |
+| 갤러리 내 `Delete` / `Backspace` | 선택된 고아 이미지 삭제 |
+| 갤러리 내 `Ctrl/Cmd + A` | 전체 선택 |
+| 갤러리 내 `Escape` | 선택 해제 |
 | 갤러리 내 `I` | 정보 패널 토글 |
+| `Ctrl/Cmd + 클릭` | 다중 선택 토글 |
+| `Shift + 클릭` | 범위 선택 |
 
 ---
 
@@ -281,3 +296,4 @@ star-imagemaster/
 | 2.0 | 2026.01.12 | PRD로 전환, React 적용, 성능/설정/테스트 전략 보완 |
 | 2.1 | 2026.01.12 | 이미지 저장 구조 및 노트 연동 전략 섹션 추가 |
 | 2.2 | 2026.01.12 | "폴더 기반" 저장 모드를 기본값으로 추가, MVP 구현 완료 |
+| 2.3 | 2026.01.13 | 갤러리 UX 개선: 다중 선택, 리스트 뷰, 벌크 작업, 정렬 기능 추가 |
