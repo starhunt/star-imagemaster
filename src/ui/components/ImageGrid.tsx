@@ -9,6 +9,7 @@ interface ImageGridProps {
   onDragStart: (e: React.DragEvent, image: ImageInfo) => void;
   columns: number;
   thumbnailSize: 'small' | 'medium' | 'large';
+  getResourcePath: (path: string) => string;
 }
 
 const THUMBNAIL_SIZES = {
@@ -24,6 +25,7 @@ export const ImageGrid: React.FC<ImageGridProps> = ({
   onDragStart,
   columns,
   thumbnailSize,
+  getResourcePath,
 }) => {
   const size = THUMBNAIL_SIZES[thumbnailSize];
 
@@ -105,7 +107,7 @@ export const ImageGrid: React.FC<ImageGridProps> = ({
         >
           {/* Thumbnail */}
           <img
-            src={`app://local/${encodeURI(image.path)}`}
+            src={getResourcePath(image.path)}
             alt={image.name}
             style={{
               width: '100%',

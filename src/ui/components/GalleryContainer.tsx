@@ -97,6 +97,14 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
     [plugin]
   );
 
+  // Get resource path for image display
+  const getResourcePath = useCallback(
+    (path: string) => {
+      return plugin.app.vault.adapter.getResourcePath(path);
+    },
+    [plugin]
+  );
+
   // Refresh images
   const handleRefresh = useCallback(() => {
     loadImages();
@@ -164,6 +172,7 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
               onDragStart={handleDragStart}
               columns={plugin.settings.galleryColumns}
               thumbnailSize={plugin.settings.thumbnailSize}
+              getResourcePath={getResourcePath}
             />
 
             {plugin.settings.showFileInfo && selectedImage && (
