@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Notice } from 'obsidian';
 import ImageMasterPlugin from '../../main';
+import { selectFolder } from '../modals/FolderSuggestModal';
 import { ImageInfo, GalleryFilter, ViewMode, SortField, SortOrder, sortImages } from '../../types';
 import { ImageGrid } from './ImageGrid';
 import { ImageList } from './ImageList';
@@ -214,10 +215,7 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
 
   // Bulk move handler
   const handleBulkMove = useCallback(async () => {
-    const targetFolder = prompt(
-      'Enter target folder path:',
-      plugin.settings.orphanFolder
-    );
+    const targetFolder = await selectFolder(plugin.app);
 
     if (!targetFolder) return;
 
