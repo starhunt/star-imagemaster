@@ -142,13 +142,53 @@ export interface HashCache {
 // ============================================
 
 export type GalleryFilter = 'all' | 'inUse' | 'orphan';
+export type ViewMode = 'grid' | 'list';
+export type SortField = 'name' | 'size' | 'created' | 'modified' | 'path';
+export type SortOrder = 'asc' | 'desc';
 
 export interface GalleryState {
   filter: GalleryFilter;
   searchQuery: string;
   selectedImage: ImageInfo | null;
-  sortBy: 'name' | 'date' | 'size';
-  sortOrder: 'asc' | 'desc';
+  sortBy: SortField;
+  sortOrder: SortOrder;
+}
+
+export interface SelectionState {
+  selectedPaths: Set<string>;
+  lastSelectedIndex: number | null;
+}
+
+export interface SortConfig {
+  field: SortField;
+  order: SortOrder;
+}
+
+// Sort images based on field and order
+export function sortImages(images: ImageInfo[], sortBy: SortField, sortOrder: SortOrder): ImageInfo[] {
+  return [...images].sort((a, b) => {
+    let comparison = 0;
+
+    switch (sortBy) {
+      case 'name':
+        comparison = a.name.localeCompare(b.name);
+        break;
+      case 'size':
+        comparison = a.size - b.size;
+        break;
+      case 'created':
+        comparison = a.created - b.created;
+        break;
+      case 'modified':
+        comparison = a.modified - b.modified;
+        break;
+      case 'path':
+        comparison = a.path.localeCompare(b.path);
+        break;
+    }
+
+    return sortOrder === 'asc' ? comparison : -comparison;
+  });
 }
 
 // ============================================
