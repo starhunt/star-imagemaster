@@ -4,7 +4,7 @@
 Obsidian용 올인원 이미지 관리 플러그인. React + TypeScript 기반.
 
 ## 현재 버전
-- **플러그인 버전**: 0.2.3
+- **플러그인 버전**: 0.2.4
 - **PRD 버전**: 2.3
 
 ## 핵심 기술 스택
@@ -64,6 +64,7 @@ GalleryContainer (상태 관리)
 ## 알려진 이슈 / 해결된 이슈
 - [해결] Move To 버튼 미동작 → `FolderSuggestModal` 도입 (v0.2.1)
 - [해결] 이미지 썸네일 미표시 → `getResourcePath()` 사용 (v0.1.x)
+- [해결] InfoPanel 미리보기 깨짐 → `getResourcePath()` 사용 (v0.2.4)
 
 ## 주요 파일 위치
 - 플러그인 엔트리: `src/main.ts`
