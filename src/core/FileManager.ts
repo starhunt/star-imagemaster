@@ -29,11 +29,18 @@ export class FileManager {
     switch (settings.storageMode) {
       case 'folderBased': {
         // {noteFolder}/{folderName}_img/
-        const folderName = noteFolder.split('/').pop() || '';
+        // First, check if an existing *_img folder exists (for renamed folders)
         const suffix = settings.imageFolderSuffix || '_img';
-        basePath = noteFolder
-          ? `${noteFolder}/${folderName}${suffix}`
-          : suffix.startsWith('_') ? suffix : `_${suffix}`;
+        const existingImageFolder = await this.findExistingImageFolder(noteFolder, suffix);
+
+        if (existingImageFolder) {
+          basePath = existingImageFolder;
+        } else {
+          const folderName = noteFolder.split('/').pop() || '';
+          basePath = noteFolder
+            ? `${noteFolder}/${folderName}${suffix}`
+            : suffix.startsWith('_') ? suffix : `_${suffix}`;
+        }
         break;
       }
       case 'central': {
@@ -433,6 +440,38 @@ export class FileManager {
         await this.plugin.app.vault.delete(folder);
       }
     }
+  }
+
+  /**
+   * Find existing image folder with suffix pattern in the given folder.
+   * This handles cases where parent folder was renamed but image folder wasn't.
+   * e.g., folder renamed from "project" to "my-project", but "project_img" still exists.
+   */
+  private async findExistingImageFolder(noteFolder: string, suffix: string): Promise<string | null> {
+    if (!noteFolder) {
+      // Root level - check for any folder ending with suffix
+      const root = this.plugin.app.vault.getRoot();
+      for (const child of root.children) {
+        if (child instanceof TFolder && child.name.endsWith(suffix)) {
+          return child.path;
+        }
+      }
+      return null;
+    }
+
+    const parentFolder = this.plugin.app.vault.getAbstractFileByPath(noteFolder);
+    if (!parentFolder || !(parentFolder instanceof TFolder)) {
+      return null;
+    }
+
+    // Look for any subfolder ending with the suffix (e.g., "_img")
+    for (const child of parentFolder.children) {
+      if (child instanceof TFolder && child.name.endsWith(suffix)) {
+        return child.path;
+      }
+    }
+
+    return null;
   }
 
   /**
