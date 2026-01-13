@@ -79,7 +79,7 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({
       {/* Preview */}
       <div style={styles.preview}>
         <img
-          src={`app://local/${encodeURI(image.path)}`}
+          src={plugin.app.vault.adapter.getResourcePath(image.path)}
           alt={image.name}
           style={styles.previewImage}
         />
