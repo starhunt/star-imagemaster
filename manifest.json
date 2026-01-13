@@ -1,6 +1,6 @@
 {
   "id": "star-imagemaster",
-  "name": "Image Master",
+  "name": "Star ImageMaster",
   "version": "0.2.2",
   "minAppVersion": "1.0.0",
   "description": "All-in-one image management plugin for Obsidian. Features: auto-save, gallery view, duplicate detection, smart delete, and link auto-update.",

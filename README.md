@@ -1,4 +1,4 @@
-# Image Master
+# Star ImageMaster
 
 Obsidian용 올인원 이미지 관리 플러그인입니다. 이미지 저장, 갤러리, 중복 감지, 고아 이미지 정리를 하나의 플러그인에서 해결합니다.
 
@@ -48,7 +48,7 @@ Obsidian용 올인원 이미지 관리 플러그인입니다. 이미지 저장, 
    ```
 4. 다운로드한 파일들을 해당 폴더에 복사
 5. Obsidian 재시작 또는 플러그인 목록 새로고침
-6. 설정 → Community plugins에서 "Image Master" 활성화
+6. 설정 → Community plugins에서 "Star ImageMaster" 활성화
 
 ### BRAT 설치 (베타 테스트용)
 
@@ -62,7 +62,7 @@ Obsidian용 올인원 이미지 관리 플러그인입니다. 이미지 저장, 
 
 ### 갤러리 열기
 
-- 명령어 팔레트(`Ctrl/Cmd + P`)에서 "Image Master: Open Gallery" 실행
+- 명령어 팔레트(`Ctrl/Cmd + P`)에서 "Star ImageMaster: Open Gallery" 실행
 - 또는 단축키 `Ctrl/Cmd + Shift + G` 사용 (설정에서 변경 가능)
 
 ### 이미지 탐색

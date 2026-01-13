@@ -1,5 +1,5 @@
 /**
- * Image Master Plugin - Type Definitions
+ * Star ImageMaster Plugin - Type Definitions
  */
 
 // ============================================

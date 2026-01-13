@@ -1,4 +1,4 @@
-# Image Master - Claude Code 프로젝트 컨텍스트
+# Star ImageMaster - Claude Code 프로젝트 컨텍스트
 
 ## 프로젝트 개요
 Obsidian용 올인원 이미지 관리 플러그인. React + TypeScript 기반.

@@ -1,4 +1,4 @@
-# Image Master PRD (Product Requirements Document)
+# Star ImageMaster PRD (Product Requirements Document)
 
 ## 문서 정보
 - **버전**: 2.3
