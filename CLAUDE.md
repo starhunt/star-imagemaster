@@ -4,7 +4,7 @@
 Obsidian용 올인원 이미지 관리 플러그인. React + TypeScript 기반.
 
 ## 현재 버전
-- **플러그인 버전**: 0.2.1
+- **플러그인 버전**: 0.2.2
 - **PRD 버전**: 2.3
 
 ## 핵심 기술 스택
@@ -48,6 +48,12 @@ GalleryContainer (상태 관리)
 - `lastSelectedIndex: number | null` - Shift 클릭 범위 선택용
 - Ctrl/Cmd + 클릭: 토글 선택
 - Shift + 클릭: 범위 선택
+
+### 폴더 기반 저장 모드 (folderBased)
+- 이미지 폴더: `{부모폴더명}_img` 형식
+- **폴더명 변경 시 동작**: 기존 `*_img` 폴더가 있으면 재사용 (이름 변경 안 함)
+- `FileManager.findExistingImageFolder()` 메서드로 기존 폴더 탐색
+- 이유: 폴더명 변경할 때마다 이미지 폴더 이름 변경 + 링크 업데이트 부담 방지
 
 ## 릴리즈 절차
 1. `manifest.json` 버전 업데이트
