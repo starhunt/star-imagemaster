@@ -414,6 +414,8 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
                 selectedPaths={selectedPaths}
                 onImageSelect={handleImageSelect}
                 onImageDoubleClick={handleImageDoubleClick}
+                onSelectAll={selectAll}
+                onDeselectAll={deselectAll}
                 sortField={sortField}
                 sortOrder={sortOrder}
                 onSortChange={(field) => handleSortChange(field)}

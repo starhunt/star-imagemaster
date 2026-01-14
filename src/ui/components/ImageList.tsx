@@ -7,6 +7,8 @@ interface ImageListProps {
   selectedPaths: Set<string>;
   onImageSelect: (image: ImageInfo, index: number, event: React.MouseEvent) => void;
   onImageDoubleClick: (image: ImageInfo) => void;
+  onSelectAll: () => void;
+  onDeselectAll: () => void;
   sortField: SortField;
   sortOrder: SortOrder;
   onSortChange: (field: SortField) => void;
@@ -72,11 +74,26 @@ export const ImageList: React.FC<ImageListProps> = ({
   selectedPaths,
   onImageSelect,
   onImageDoubleClick,
+  onSelectAll,
+  onDeselectAll,
   sortField,
   sortOrder,
   onSortChange,
   getResourcePath,
 }) => {
+  // Calculate selection state for header checkbox
+  const allSelected = images.length > 0 && images.every(img => selectedPaths.has(img.path));
+  const someSelected = images.some(img => selectedPaths.has(img.path));
+  const isIndeterminate = someSelected && !allSelected;
+
+  const handleSelectAllChange = useCallback(() => {
+    if (allSelected) {
+      onDeselectAll();
+    } else {
+      onSelectAll();
+    }
+  }, [allSelected, onSelectAll, onDeselectAll]);
+
   const handleRowClick = useCallback(
     (e: React.MouseEvent, image: ImageInfo, index: number) => {
       onImageSelect(image, index, e);
@@ -104,7 +121,16 @@ export const ImageList: React.FC<ImageListProps> = ({
         <thead>
           <tr>
             <th className="list-header-cell checkbox-cell" style={{ width: '40px' }}>
-              {/* Select all checkbox could go here */}
+              <input
+                type="checkbox"
+                checked={allSelected}
+                ref={(el) => {
+                  if (el) el.indeterminate = isIndeterminate;
+                }}
+                onChange={handleSelectAllChange}
+                className="select-all-checkbox"
+                title={allSelected ? 'Deselect all' : 'Select all'}
+              />
             </th>
             <th className="list-header-cell thumbnail-cell" style={{ width: '50px' }}>
               {/* Thumbnail column */}
