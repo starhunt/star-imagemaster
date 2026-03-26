@@ -12,6 +12,7 @@ import { HashService } from './core/HashService';
 import { LinkUpdater } from './core/LinkUpdater';
 import { OrphanDetector } from './core/OrphanDetector';
 import { GALLERY_VIEW_TYPE, GalleryView } from './ui/GalleryView';
+import { setLanguage, t } from './i18n';
 
 export default class ImageMasterPlugin extends Plugin {
   settings: ImageMasterSettings;
@@ -26,6 +27,9 @@ export default class ImageMasterPlugin extends Plugin {
     // Load settings
     await this.loadSettings();
 
+    // Initialize language
+    setLanguage(this.settings.language);
+
     // Initialize core services
     this.hashService = new HashService(this);
     this.fileManager = new FileManager(this);
@@ -39,7 +43,7 @@ export default class ImageMasterPlugin extends Plugin {
     );
 
     // Add ribbon icon for gallery
-    this.addRibbonIcon('image', 'Open Image Gallery', () => {
+    this.addRibbonIcon('image', t('command.openGallery'), () => {
       this.activateGalleryView();
     });
 
@@ -49,7 +53,7 @@ export default class ImageMasterPlugin extends Plugin {
     // Register commands
     this.addCommand({
       id: 'open-image-gallery',
-      name: 'Open Image Gallery',
+      name: t('command.openGallery'),
       callback: () => {
         this.activateGalleryView();
       },
@@ -63,10 +67,10 @@ export default class ImageMasterPlugin extends Plugin {
 
     this.addCommand({
       id: 'scan-orphan-images',
-      name: 'Scan for Orphan Images',
+      name: t('command.scanOrphans'),
       callback: async () => {
         const orphans = await this.orphanDetector.scanOrphanImages();
-        new Notice(`Found ${orphans.length} orphan image(s)`);
+        new Notice(t('notice.foundOrphans', { count: orphans.length }));
       },
     });
 
@@ -223,7 +227,7 @@ export default class ImageMasterPlugin extends Plugin {
    */
   private async handleImagePaste(blob: File, activeFile: TFile | null) {
     if (!activeFile) {
-      new Notice('No active note to paste image');
+      new Notice(t('notice.noActiveNote'));
       return;
     }
 
@@ -238,7 +242,7 @@ export default class ImageMasterPlugin extends Plugin {
           if (this.settings.duplicateAction === 'reuse') {
             // Insert link to existing image
             await this.fileManager.insertImageLink(activeFile, existingImage);
-            new Notice('Reusing existing duplicate image');
+            new Notice(t('notice.reusingDuplicate'));
             return;
           }
           // If action is 'ask' or 'rename', continue to create new file
@@ -254,10 +258,10 @@ export default class ImageMasterPlugin extends Plugin {
       // Insert link to the new image
       await this.fileManager.insertImageLink(activeFile, savedFile.path);
 
-      new Notice(`Image saved: ${savedFile.name}`);
+      new Notice(t('notice.imageSaved', { name: savedFile.name }));
     } catch (error) {
       console.error('Error handling image paste:', error);
-      new Notice('Failed to save image');
+      new Notice(t('notice.failedToSave'));
     }
   }
 

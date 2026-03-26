@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { SortField, SortOrder } from '../../types';
+import { t, TranslationKey } from '../../i18n';
 
 interface SortDropdownProps {
   sortField: SortField;
@@ -7,12 +8,12 @@ interface SortDropdownProps {
   onSortChange: (field: SortField, order: SortOrder) => void;
 }
 
-const SORT_OPTIONS: { value: SortField; label: string }[] = [
-  { value: 'name', label: 'Name' },
-  { value: 'size', label: 'Size' },
-  { value: 'created', label: 'Created' },
-  { value: 'modified', label: 'Modified' },
-  { value: 'path', label: 'Folder' },
+const SORT_OPTIONS: { value: SortField; labelKey: TranslationKey }[] = [
+  { value: 'name', labelKey: 'sort.name' },
+  { value: 'size', labelKey: 'sort.size' },
+  { value: 'created', labelKey: 'sort.created' },
+  { value: 'modified', labelKey: 'sort.modified' },
+  { value: 'path', labelKey: 'sort.folder' },
 ];
 
 export const SortDropdown: React.FC<SortDropdownProps> = ({
@@ -34,18 +35,18 @@ export const SortDropdown: React.FC<SortDropdownProps> = ({
         className="sort-select"
         value={sortField}
         onChange={handleFieldChange}
-        title="Sort by"
+        title={t('sort.sortBy')}
       >
         {SORT_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>
-            {option.label}
+            {t(option.labelKey)}
           </option>
         ))}
       </select>
       <button
         className="sort-order-btn"
         onClick={toggleOrder}
-        title={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+        title={sortOrder === 'asc' ? t('sort.ascending') : t('sort.descending')}
       >
         {sortOrder === 'asc' ? (
           <svg

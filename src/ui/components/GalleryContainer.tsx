@@ -11,6 +11,7 @@ import { FilterTabs } from './FilterTabs';
 import { ActionToolbar } from './ActionToolbar';
 import { ViewModeToggle } from './ViewModeToggle';
 import { SortDropdown } from './SortDropdown';
+import { t } from '../../i18n';
 
 interface GalleryContainerProps {
   plugin: ImageMasterPlugin;
@@ -157,7 +158,7 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
       const activeFile = plugin.app.workspace.getActiveFile();
       if (activeFile) {
         plugin.fileManager.insertImageLink(activeFile, image.path);
-        new Notice(`Inserted: ${image.name}`);
+        new Notice(t('notice.inserted', { name: image.name }));
       }
     },
     [plugin]
@@ -180,14 +181,14 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
       .map((img) => img.path);
 
     if (orphanPaths.length === 0) {
-      new Notice('No orphan images selected for deletion');
+      new Notice(t('notice.noOrphansSelected'));
       return;
     }
 
     const confirmMessage =
       orphanPaths.length === 1
-        ? `Delete "${orphanPaths[0].split('/').pop()}"?`
-        : `Delete ${orphanPaths.length} orphan images?`;
+        ? t('confirm.deleteOne', { name: orphanPaths[0].split('/').pop() || '' })
+        : t('confirm.deleteMany', { count: orphanPaths.length });
 
     if (!confirm(confirmMessage)) {
       return;
@@ -203,11 +204,11 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
           orphanPaths.forEach((path) => newSelection.delete(path));
           return newSelection;
         });
-        new Notice(`Deleted ${deleted} image(s)`);
+        new Notice(t('notice.deleted', { count: deleted }));
       }
     } catch (error) {
       console.error('Failed to delete images:', error);
-      new Notice('Failed to delete some images');
+      new Notice(t('notice.failedToDelete'));
     } finally {
       setIsDeleting(false);
     }
@@ -241,20 +242,20 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
       }
 
       if (movedCount > 0) {
-        new Notice(`Moved ${movedCount} image(s) to ${targetFolder}`);
+        new Notice(t('notice.moved', { count: movedCount, folder: targetFolder }));
         loadImages(); // Refresh
         deselectAll();
       }
     } catch (error) {
       console.error('Failed to move images:', error);
-      new Notice('Failed to move some images');
+      new Notice(t('notice.failedToMove'));
     }
   }, [selectedPaths, plugin]);
 
   // Single image delete handler (from InfoPanel)
   const handleSingleDelete = useCallback(
     async (imagePath: string) => {
-      if (!confirm('Are you sure you want to delete this image?')) {
+      if (!confirm(t('confirm.deleteSingle'))) {
         return;
       }
 
@@ -324,14 +325,25 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
     };
   }, [images]);
 
+  // Footer text
+  const footerText = useMemo(() => {
+    const countText = filteredImages.length === 1
+      ? t('gallery.imageCount', { count: filteredImages.length })
+      : t('gallery.imageCountPlural', { count: filteredImages.length });
+    const selectedText = selectedPaths.size > 0
+      ? ` • ${t('gallery.selected', { count: selectedPaths.size })}`
+      : '';
+    return `${countText}${selectedText}`;
+  }, [filteredImages.length, selectedPaths.size]);
+
   return (
     <div className="image-master-gallery">
       {/* Header */}
       <div className="gallery-header">
-        <h4>Image Gallery</h4>
+        <h4>{t('gallery.title')}</h4>
         <div className="gallery-header-actions">
           <ViewModeToggle viewMode={viewMode} onViewModeChange={setViewMode} />
-          <button className="gallery-refresh-btn" onClick={handleRefresh} title="Refresh">
+          <button className="gallery-refresh-btn" onClick={handleRefresh} title={t('gallery.refresh')}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -354,7 +366,7 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
         <div className="gallery-search">
           <input
             type="text"
-            placeholder="Search images..."
+            placeholder={t('gallery.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="gallery-search-input"
@@ -384,16 +396,16 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
       {/* Content */}
       <div className="gallery-content">
         {isLoading ? (
-          <div className="gallery-loading">Loading images...</div>
+          <div className="gallery-loading">{t('gallery.loading')}</div>
         ) : filteredImages.length === 0 ? (
           <div className="gallery-empty">
             {searchQuery
-              ? 'No images match your search'
+              ? t('gallery.emptySearch')
               : filter === 'orphan'
-              ? 'No orphan images found - all images are in use!'
+              ? t('gallery.emptyOrphan')
               : filter === 'inUse'
-              ? 'No images in use'
-              : 'No images found in vault'}
+              ? t('gallery.emptyInUse')
+              : t('gallery.emptyAll')}
           </div>
         ) : (
           <div className="gallery-main">
@@ -437,10 +449,7 @@ export const GalleryContainer: React.FC<GalleryContainerProps> = ({ plugin }) =>
 
       {/* Footer */}
       <div className="gallery-footer">
-        <span>
-          {filteredImages.length} image{filteredImages.length !== 1 ? 's' : ''}
-          {selectedPaths.size > 0 && ` • ${selectedPaths.size} selected`}
-        </span>
+        <span>{footerText}</span>
       </div>
     </div>
   );

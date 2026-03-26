@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ImageInfo } from '../../types';
+import { t } from '../../i18n';
 
 interface ActionToolbarProps {
   selectedImages: ImageInfo[];
@@ -41,10 +42,10 @@ export const ActionToolbar: React.FC<ActionToolbarProps> = ({
           <polyline points="20 6 9 17 4 12" />
         </svg>
         <span className="selection-count">
-          {selectedCount} selected
+          {t('action.selected', { count: selectedCount })}
           {orphanCount > 0 && inUseCount > 0 && (
             <span className="selection-detail">
-              ({orphanCount} orphan, {inUseCount} in use)
+              ({t('action.orphanCount', { orphan: orphanCount, inUse: inUseCount })})
             </span>
           )}
         </span>
@@ -55,7 +56,7 @@ export const ActionToolbar: React.FC<ActionToolbarProps> = ({
           className="action-btn action-btn-danger"
           onClick={onDelete}
           disabled={isDeleting || orphanCount === 0}
-          title={orphanCount === 0 ? 'Only orphan images can be deleted' : `Delete ${orphanCount} orphan image(s)`}
+          title={orphanCount === 0 ? t('action.deleteOrphanOnly') : t('action.deleteOrphanTitle', { count: orphanCount })}
         >
           {isDeleting ? (
             <span className="loading-spinner" />
@@ -75,14 +76,14 @@ export const ActionToolbar: React.FC<ActionToolbarProps> = ({
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
             </svg>
           )}
-          Delete{orphanCount > 0 && ` (${orphanCount})`}
+          {orphanCount > 0 ? t('action.deleteCount', { count: orphanCount }) : t('action.delete')}
         </button>
 
         <button
           className="action-btn"
           onClick={onMove}
           disabled={isDeleting}
-          title="Move selected images to folder"
+          title={t('action.moveTitle')}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -99,14 +100,14 @@ export const ActionToolbar: React.FC<ActionToolbarProps> = ({
             <line x1="12" y1="11" x2="12" y2="17" />
             <polyline points="9 14 12 11 15 14" />
           </svg>
-          Move to...
+          {t('action.moveTo')}
         </button>
 
         <button
           className="action-btn action-btn-secondary"
           onClick={onDeselect}
           disabled={isDeleting}
-          title="Deselect all"
+          title={t('action.deselectAll')}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -122,7 +123,7 @@ export const ActionToolbar: React.FC<ActionToolbarProps> = ({
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
-          Deselect
+          {t('action.deselect')}
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { TFile, TFolder, normalizePath, Notice } from 'obsidian';
 import ImageMasterPlugin from '../main';
 import { ImageInfo, isImageFile } from '../types';
+import { t } from '../i18n';
 
 /**
  * OrphanDetector handles detection and management of orphan images:
@@ -133,7 +134,7 @@ export class OrphanDetector {
     }
 
     if (movedCount > 0) {
-      new Notice(`Moved ${movedCount} orphan image(s) to ${targetFolder}`);
+      new Notice(t('notice.movedOrphans', { count: movedCount, folder: targetFolder }));
     }
   }
 

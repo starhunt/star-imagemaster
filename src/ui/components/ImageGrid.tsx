@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import { ImageInfo } from '../../types';
+import { t } from '../../i18n';
 
 interface ImageGridProps {
   images: ImageInfo[];
@@ -124,7 +125,7 @@ export const ImageGrid: React.FC<ImageGridProps> = ({
             onDragStart={(e) => onDragStart(e, image)}
             tabIndex={0}
             role="button"
-            aria-label={`Select image ${image.name}`}
+            aria-label={t('image.selectAria', { name: image.name })}
             aria-selected={isSelected}
           >
             {/* Selection checkbox indicator */}
@@ -188,9 +189,9 @@ export const ImageGrid: React.FC<ImageGridProps> = ({
                   fontSize: '10px',
                   fontWeight: 'bold',
                 }}
-                title="This image is not referenced by any note"
+                title={t('image.orphanTooltip')}
               >
-                Orphan
+                {t('image.orphan')}
               </div>
             )}
 

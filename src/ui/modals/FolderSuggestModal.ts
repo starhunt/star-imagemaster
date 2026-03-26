@@ -1,4 +1,5 @@
 import { App, FuzzySuggestModal, TFolder } from 'obsidian';
+import { t } from '../../i18n';
 
 export class FolderSuggestModal extends FuzzySuggestModal<TFolder> {
   private folders: TFolder[];
@@ -8,7 +9,7 @@ export class FolderSuggestModal extends FuzzySuggestModal<TFolder> {
     super(app);
     this.onChoose = onChoose;
     this.folders = this.getAllFolders();
-    this.setPlaceholder('Select a folder to move images to...');
+    this.setPlaceholder(t('modal.selectFolder'));
   }
 
   private getAllFolders(): TFolder[] {

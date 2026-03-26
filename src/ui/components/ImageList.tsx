@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import { ImageInfo, SortField, SortOrder } from '../../types';
+import { t } from '../../i18n';
 
 interface ImageListProps {
   images: ImageInfo[];
@@ -129,21 +130,21 @@ export const ImageList: React.FC<ImageListProps> = ({
                 }}
                 onChange={handleSelectAllChange}
                 className="select-all-checkbox"
-                title={allSelected ? 'Deselect all' : 'Select all'}
+                title={allSelected ? t('action.deselectAll') : t('action.selectAll')}
               />
             </th>
             <th className="list-header-cell thumbnail-cell" style={{ width: '50px' }}>
               {/* Thumbnail column */}
             </th>
             <SortHeader
-              label="Name"
+              label={t('list.name')}
               field="name"
               currentField={sortField}
               currentOrder={sortOrder}
               onClick={onSortChange}
             />
             <SortHeader
-              label="Folder"
+              label={t('list.folder')}
               field="path"
               currentField={sortField}
               currentOrder={sortOrder}
@@ -151,7 +152,7 @@ export const ImageList: React.FC<ImageListProps> = ({
               width="150px"
             />
             <SortHeader
-              label="Size"
+              label={t('list.size')}
               field="size"
               currentField={sortField}
               currentOrder={sortOrder}
@@ -159,7 +160,7 @@ export const ImageList: React.FC<ImageListProps> = ({
               width="80px"
             />
             <SortHeader
-              label="Created"
+              label={t('list.created')}
               field="created"
               currentField={sortField}
               currentOrder={sortOrder}
@@ -167,7 +168,7 @@ export const ImageList: React.FC<ImageListProps> = ({
               width="100px"
             />
             <th className="list-header-cell" style={{ width: '70px' }}>
-              Status
+              {t('list.status')}
             </th>
           </tr>
         </thead>
@@ -213,9 +214,9 @@ export const ImageList: React.FC<ImageListProps> = ({
                 </td>
                 <td className="list-cell status-cell">
                   {image.isOrphan ? (
-                    <span className="status-badge orphan">Orphan</span>
+                    <span className="status-badge orphan">{t('list.orphan')}</span>
                   ) : (
-                    <span className="status-badge in-use">In Use</span>
+                    <span className="status-badge in-use">{t('list.inUse')}</span>
                   )}
                 </td>
               </tr>

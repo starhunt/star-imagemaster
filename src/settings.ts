@@ -7,6 +7,7 @@ import {
   OrphanHandling,
   DuplicateAction,
 } from './types';
+import { t, setLanguage, Language } from './i18n';
 
 export class ImageMasterSettingTab extends PluginSettingTab {
   plugin: ImageMasterPlugin;
@@ -21,33 +22,53 @@ export class ImageMasterSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     // ========================================
-    // Storage Location Settings
+    // Language Setting
     // ========================================
-    containerEl.createEl('h2', { text: 'Storage Location' });
-
     new Setting(containerEl)
-      .setName('Storage mode')
-      .setDesc('Choose how images are organized in your vault')
+      .setName(t('settings.language'))
+      .setDesc(t('settings.language.desc'))
       .addDropdown((dropdown) =>
         dropdown
-          .addOption('folderBased', 'Folder-based ({folderName}_img)')
-          .addOption('central', 'Central folder (attachments/)')
-          .addOption('dateBased', 'Date-based (attachments/year/month/)')
-          .addOption('noteFolder', 'Note folder (attachments/{noteName}/)')
-          .addOption('sameAsNote', 'Same as note')
+          .addOption('auto', 'Auto Detect')
+          .addOption('ko', '한국어')
+          .addOption('en', 'English')
+          .setValue(this.plugin.settings.language)
+          .onChange(async (value) => {
+            this.plugin.settings.language = value as Language;
+            setLanguage(value as Language);
+            await this.plugin.saveSettings();
+            this.display(); // 언어 변경 시 UI 새로고침
+          })
+      );
+
+    // ========================================
+    // Storage Location Settings
+    // ========================================
+    containerEl.createEl('h2', { text: t('settings.storageLocation') });
+
+    new Setting(containerEl)
+      .setName(t('settings.storageMode'))
+      .setDesc(t('settings.storageMode.desc'))
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption('folderBased', t('settings.storageMode.folderBased'))
+          .addOption('central', t('settings.storageMode.central'))
+          .addOption('dateBased', t('settings.storageMode.dateBased'))
+          .addOption('noteFolder', t('settings.storageMode.noteFolder'))
+          .addOption('sameAsNote', t('settings.storageMode.sameAsNote'))
           .setValue(this.plugin.settings.storageMode)
           .onChange(async (value) => {
             this.plugin.settings.storageMode = value as StorageMode;
             await this.plugin.saveSettings();
-            this.display(); // Refresh to show/hide related options
+            this.display();
           })
       );
 
     // Folder-based mode options
     if (this.plugin.settings.storageMode === 'folderBased') {
       new Setting(containerEl)
-        .setName('Image folder suffix')
-        .setDesc('Suffix for image folders (e.g., "_img" creates "project_img")')
+        .setName(t('settings.imageFolderSuffix'))
+        .setDesc(t('settings.imageFolderSuffix.desc'))
         .addText((text) =>
           text
             .setPlaceholder('_img')
@@ -62,8 +83,8 @@ export class ImageMasterSettingTab extends PluginSettingTab {
     // Central/Date-based mode options
     if (['central', 'dateBased'].includes(this.plugin.settings.storageMode)) {
       new Setting(containerEl)
-        .setName('Central folder')
-        .setDesc('Folder name for storing images')
+        .setName(t('settings.centralFolder'))
+        .setDesc(t('settings.centralFolder.desc'))
         .addText((text) =>
           text
             .setPlaceholder('attachments')
@@ -78,8 +99,8 @@ export class ImageMasterSettingTab extends PluginSettingTab {
     // Date-based mode options
     if (this.plugin.settings.storageMode === 'dateBased') {
       new Setting(containerEl)
-        .setName('Date format')
-        .setDesc('Subfolder format using {year}, {month}, {day}')
+        .setName(t('settings.dateFormat'))
+        .setDesc(t('settings.dateFormat.desc'))
         .addText((text) =>
           text
             .setPlaceholder('{year}/{month}')
@@ -94,18 +115,18 @@ export class ImageMasterSettingTab extends PluginSettingTab {
     // ========================================
     // Filename Settings
     // ========================================
-    containerEl.createEl('h2', { text: 'Filename' });
+    containerEl.createEl('h2', { text: t('settings.filename') });
 
     new Setting(containerEl)
-      .setName('Filename pattern')
-      .setDesc('How to name saved images')
+      .setName(t('settings.filenamePattern'))
+      .setDesc(t('settings.filenamePattern.desc'))
       .addDropdown((dropdown) =>
         dropdown
-          .addOption('original', 'Original filename')
-          .addOption('timestamp', 'Timestamp + original')
-          .addOption('uuid', 'Random UUID')
-          .addOption('hash', 'Content hash')
-          .addOption('custom', 'Custom pattern')
+          .addOption('original', t('settings.filenamePattern.original'))
+          .addOption('timestamp', t('settings.filenamePattern.timestamp'))
+          .addOption('uuid', t('settings.filenamePattern.uuid'))
+          .addOption('hash', t('settings.filenamePattern.hash'))
+          .addOption('custom', t('settings.filenamePattern.custom'))
           .setValue(this.plugin.settings.filenamePattern)
           .onChange(async (value) => {
             this.plugin.settings.filenamePattern = value as FilenamePattern;
@@ -116,8 +137,8 @@ export class ImageMasterSettingTab extends PluginSettingTab {
 
     if (this.plugin.settings.filenamePattern === 'custom') {
       new Setting(containerEl)
-        .setName('Custom pattern')
-        .setDesc('Variables: {original}, {timestamp}, {date}, {year}, {month}, {day}, {uuid}, {hash}, {note}, {folder}')
+        .setName(t('settings.customPattern'))
+        .setDesc(t('settings.customPattern.desc'))
         .addText((text) =>
           text
             .setPlaceholder('{timestamp}_{original}')
@@ -132,12 +153,12 @@ export class ImageMasterSettingTab extends PluginSettingTab {
     // ========================================
     // Note Integration Settings
     // ========================================
-    containerEl.createEl('h2', { text: 'Note Integration' });
+    containerEl.createEl('h2', { text: t('settings.noteIntegration') });
 
     if (['folderBased', 'sameAsNote'].includes(this.plugin.settings.storageMode)) {
       new Setting(containerEl)
-        .setName('Move images with note')
-        .setDesc('When a note is moved, also move its referenced images')
+        .setName(t('settings.moveImagesWithNote'))
+        .setDesc(t('settings.moveImagesWithNote.desc'))
         .addToggle((toggle) =>
           toggle
             .setValue(this.plugin.settings.moveImagesWithNote)
@@ -150,8 +171,8 @@ export class ImageMasterSettingTab extends PluginSettingTab {
 
     if (this.plugin.settings.storageMode === 'noteFolder') {
       new Setting(containerEl)
-        .setName('Rename image folder')
-        .setDesc('When a note is renamed, also rename its image folder')
+        .setName(t('settings.renameImageFolder'))
+        .setDesc(t('settings.renameImageFolder.desc'))
         .addToggle((toggle) =>
           toggle
             .setValue(this.plugin.settings.renameImageFolder)
@@ -163,8 +184,8 @@ export class ImageMasterSettingTab extends PluginSettingTab {
     }
 
     new Setting(containerEl)
-      .setName('Cleanup empty folders')
-      .setDesc('Automatically delete empty image folders')
+      .setName(t('settings.cleanupEmptyFolders'))
+      .setDesc(t('settings.cleanupEmptyFolders.desc'))
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.cleanupEmptyFolders)
@@ -177,17 +198,17 @@ export class ImageMasterSettingTab extends PluginSettingTab {
     // ========================================
     // Link Format Settings
     // ========================================
-    containerEl.createEl('h2', { text: 'Link Format' });
+    containerEl.createEl('h2', { text: t('settings.linkFormat') });
 
     new Setting(containerEl)
-      .setName('Link format')
-      .setDesc('How image links are inserted into notes')
+      .setName(t('settings.linkFormat.label'))
+      .setDesc(t('settings.linkFormat.desc'))
       .addDropdown((dropdown) =>
         dropdown
-          .addOption('wikilink', 'Wikilink (![[image.png]])')
-          .addOption('wikilink-path', 'Wikilink with path (![[folder/image.png]])')
-          .addOption('markdown-relative', 'Markdown relative (![](./image.png))')
-          .addOption('markdown-absolute', 'Markdown absolute (![](/image.png))')
+          .addOption('wikilink', t('settings.linkFormat.wikilink'))
+          .addOption('wikilink-path', t('settings.linkFormat.wikilinkPath'))
+          .addOption('markdown-relative', t('settings.linkFormat.markdownRelative'))
+          .addOption('markdown-absolute', t('settings.linkFormat.markdownAbsolute'))
           .setValue(this.plugin.settings.linkFormat)
           .onChange(async (value) => {
             this.plugin.settings.linkFormat = value as LinkFormat;
@@ -198,11 +219,11 @@ export class ImageMasterSettingTab extends PluginSettingTab {
     // ========================================
     // Duplicate Detection Settings
     // ========================================
-    containerEl.createEl('h2', { text: 'Duplicate Detection' });
+    containerEl.createEl('h2', { text: t('settings.duplicateDetection') });
 
     new Setting(containerEl)
-      .setName('Enable duplicate detection')
-      .setDesc('Detect and handle duplicate images using content hash')
+      .setName(t('settings.enableDuplicateDetection'))
+      .setDesc(t('settings.enableDuplicateDetection.desc'))
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.enableDuplicateDetection)
@@ -215,13 +236,13 @@ export class ImageMasterSettingTab extends PluginSettingTab {
 
     if (this.plugin.settings.enableDuplicateDetection) {
       new Setting(containerEl)
-        .setName('Duplicate action')
-        .setDesc('What to do when a duplicate image is detected')
+        .setName(t('settings.duplicateAction'))
+        .setDesc(t('settings.duplicateAction.desc'))
         .addDropdown((dropdown) =>
           dropdown
-            .addOption('reuse', 'Reuse existing image')
-            .addOption('ask', 'Ask each time')
-            .addOption('rename', 'Create with new name')
+            .addOption('reuse', t('settings.duplicateAction.reuse'))
+            .addOption('ask', t('settings.duplicateAction.ask'))
+            .addOption('rename', t('settings.duplicateAction.rename'))
             .setValue(this.plugin.settings.duplicateAction)
             .onChange(async (value) => {
               this.plugin.settings.duplicateAction = value as DuplicateAction;
@@ -233,11 +254,11 @@ export class ImageMasterSettingTab extends PluginSettingTab {
     // ========================================
     // Orphan Image Settings
     // ========================================
-    containerEl.createEl('h2', { text: 'Orphan Images' });
+    containerEl.createEl('h2', { text: t('settings.orphanImages') });
 
     new Setting(containerEl)
-      .setName('Auto-detect orphans')
-      .setDesc('Automatically detect orphan images when notes are deleted')
+      .setName(t('settings.autoDetectOrphans'))
+      .setDesc(t('settings.autoDetectOrphans.desc'))
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.autoDetectOrphans)
@@ -248,13 +269,13 @@ export class ImageMasterSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName('Orphan handling')
-      .setDesc('How to handle orphan images')
+      .setName(t('settings.orphanHandling'))
+      .setDesc(t('settings.orphanHandling.desc'))
       .addDropdown((dropdown) =>
         dropdown
-          .addOption('markOnly', 'Mark only (show in gallery)')
-          .addOption('moveToFolder', 'Move to orphan folder')
-          .addOption('keep', 'Keep in place')
+          .addOption('markOnly', t('settings.orphanHandling.markOnly'))
+          .addOption('moveToFolder', t('settings.orphanHandling.moveToFolder'))
+          .addOption('keep', t('settings.orphanHandling.keep'))
           .setValue(this.plugin.settings.orphanHandling)
           .onChange(async (value) => {
             this.plugin.settings.orphanHandling = value as OrphanHandling;
@@ -265,8 +286,8 @@ export class ImageMasterSettingTab extends PluginSettingTab {
 
     if (this.plugin.settings.orphanHandling === 'moveToFolder') {
       new Setting(containerEl)
-        .setName('Orphan folder')
-        .setDesc('Folder to move orphan images')
+        .setName(t('settings.orphanFolder'))
+        .setDesc(t('settings.orphanFolder.desc'))
         .addText((text) =>
           text
             .setPlaceholder('_orphaned')
@@ -281,11 +302,11 @@ export class ImageMasterSettingTab extends PluginSettingTab {
     // ========================================
     // UI Settings
     // ========================================
-    containerEl.createEl('h2', { text: 'Gallery UI' });
+    containerEl.createEl('h2', { text: t('settings.galleryUI') });
 
     new Setting(containerEl)
-      .setName('Gallery columns')
-      .setDesc('Number of columns in the gallery grid (3-6)')
+      .setName(t('settings.galleryColumns'))
+      .setDesc(t('settings.galleryColumns.desc'))
       .addSlider((slider) =>
         slider
           .setLimits(3, 6, 1)
@@ -298,13 +319,13 @@ export class ImageMasterSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName('Thumbnail size')
-      .setDesc('Size of image thumbnails in gallery')
+      .setName(t('settings.thumbnailSize'))
+      .setDesc(t('settings.thumbnailSize.desc'))
       .addDropdown((dropdown) =>
         dropdown
-          .addOption('small', 'Small')
-          .addOption('medium', 'Medium')
-          .addOption('large', 'Large')
+          .addOption('small', t('settings.thumbnailSize.small'))
+          .addOption('medium', t('settings.thumbnailSize.medium'))
+          .addOption('large', t('settings.thumbnailSize.large'))
           .setValue(this.plugin.settings.thumbnailSize)
           .onChange(async (value) => {
             this.plugin.settings.thumbnailSize = value as 'small' | 'medium' | 'large';
@@ -313,8 +334,8 @@ export class ImageMasterSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName('Show file info')
-      .setDesc('Show file information panel in gallery')
+      .setName(t('settings.showFileInfo'))
+      .setDesc(t('settings.showFileInfo.desc'))
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.showFileInfo)

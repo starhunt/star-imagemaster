@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ViewMode } from '../../types';
+import { t } from '../../i18n';
 
 interface ViewModeToggleProps {
   viewMode: ViewMode;
@@ -15,7 +16,7 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
       <button
         className={`view-mode-btn ${viewMode === 'grid' ? 'active' : ''}`}
         onClick={() => onViewModeChange('grid')}
-        title="Grid view"
+        title={t('view.grid')}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -37,7 +38,7 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
       <button
         className={`view-mode-btn ${viewMode === 'list' ? 'active' : ''}`}
         onClick={() => onViewModeChange('list')}
-        title="List view"
+        title={t('view.list')}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

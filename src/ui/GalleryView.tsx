@@ -3,6 +3,7 @@ import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import ImageMasterPlugin from '../main';
 import { GalleryContainer } from './components/GalleryContainer';
+import { t } from '../i18n';
 
 export const GALLERY_VIEW_TYPE = 'image-master-gallery';
 
@@ -20,7 +21,7 @@ export class GalleryView extends ItemView {
   }
 
   getDisplayText(): string {
-    return 'Image Gallery';
+    return t('gallery.title');
   }
 
   getIcon(): string {

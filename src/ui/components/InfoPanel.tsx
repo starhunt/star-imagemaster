@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TFile } from 'obsidian';
 import ImageMasterPlugin from '../../main';
 import { ImageInfo } from '../../types';
+import { t } from '../../i18n';
 
 interface InfoPanelProps {
   image: ImageInfo;
@@ -37,7 +38,7 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({
   const handleRename = async () => {
     const file = plugin.app.vault.getAbstractFileByPath(image.path);
     if (file && file instanceof TFile) {
-      const newName = prompt('Enter new name:', image.name);
+      const newName = prompt(t('info.renamePrompt'), image.name);
       if (newName && newName !== image.name) {
         const newPath = image.path.replace(image.name, newName);
         await plugin.app.vault.rename(file, newPath);
@@ -70,8 +71,8 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({
     <div className="info-panel" style={styles.panel}>
       {/* Header */}
       <div style={styles.header}>
-        <h5 style={styles.title}>Image Info</h5>
-        <button onClick={onClose} style={styles.closeButton} title="Close">
+        <h5 style={styles.title}>{t('info.title')}</h5>
+        <button onClick={onClose} style={styles.closeButton} title={t('info.close')}>
           &times;
         </button>
       </div>
@@ -87,18 +88,18 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({
 
       {/* Info */}
       <div style={styles.infoList}>
-        <InfoRow label="Name" value={image.name} />
-        <InfoRow label="Path" value={image.path} />
-        <InfoRow label="Size" value={formatFileSize(image.size)} />
-        <InfoRow label="Type" value={image.extension.toUpperCase()} />
+        <InfoRow label={t('info.name')} value={image.name} />
+        <InfoRow label={t('info.path')} value={image.path} />
+        <InfoRow label={t('info.size')} value={formatFileSize(image.size)} />
+        <InfoRow label={t('info.type')} value={image.extension.toUpperCase()} />
         {image.width && image.height && (
-          <InfoRow label="Dimensions" value={`${image.width} x ${image.height}`} />
+          <InfoRow label={t('info.dimensions')} value={`${image.width} x ${image.height}`} />
         )}
-        <InfoRow label="Created" value={formatDate(image.created)} />
-        <InfoRow label="Modified" value={formatDate(image.modified)} />
+        <InfoRow label={t('info.created')} value={formatDate(image.created)} />
+        <InfoRow label={t('info.modified')} value={formatDate(image.modified)} />
         <InfoRow
-          label="Status"
-          value={image.isOrphan ? 'Orphan' : 'In Use'}
+          label={t('info.status')}
+          value={image.isOrphan ? t('info.orphan') : t('info.inUse')}
           valueStyle={image.isOrphan ? { color: 'var(--text-error)' } : { color: 'var(--text-success)' }}
         />
       </div>
@@ -106,7 +107,7 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({
       {/* Referenced Notes */}
       {image.referencedBy.length > 0 && (
         <div style={styles.section}>
-          <h6 style={styles.sectionTitle}>Referenced by ({image.referencedBy.length})</h6>
+          <h6 style={styles.sectionTitle}>{t('info.referencedBy', { count: image.referencedBy.length })}</h6>
           <div style={styles.noteList}>
             {image.referencedBy.map((notePath) => (
               <button
@@ -123,25 +124,25 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({
 
       {/* Actions */}
       <div style={styles.actions}>
-        <button onClick={handleCopyLink} style={styles.actionButton} title="Copy link">
-          Copy Link
+        <button onClick={handleCopyLink} style={styles.actionButton} title={t('info.copyLink')}>
+          {t('info.copyLink')}
         </button>
-        <button onClick={handleCopyPath} style={styles.actionButton} title="Copy path">
-          Copy Path
+        <button onClick={handleCopyPath} style={styles.actionButton} title={t('info.copyPath')}>
+          {t('info.copyPath')}
         </button>
-        <button onClick={handleRename} style={styles.actionButton} title="Rename">
-          Rename
+        <button onClick={handleRename} style={styles.actionButton} title={t('info.rename')}>
+          {t('info.rename')}
         </button>
-        <button onClick={handleOpenInExplorer} style={styles.actionButton} title="Show in folder">
-          Open Folder
+        <button onClick={handleOpenInExplorer} style={styles.actionButton} title={t('info.openFolder')}>
+          {t('info.openFolder')}
         </button>
         {image.isOrphan && (
           <button
             onClick={() => onDelete(image.path)}
             style={{ ...styles.actionButton, ...styles.deleteButton }}
-            title="Delete"
+            title={t('info.delete')}
           >
-            Delete
+            {t('info.delete')}
           </button>
         )}
       </div>

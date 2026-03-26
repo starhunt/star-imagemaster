@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { GalleryFilter } from '../../types';
+import { t } from '../../i18n';
 
 interface FilterTabsProps {
   filter: GalleryFilter;
@@ -16,10 +17,10 @@ export const FilterTabs: React.FC<FilterTabsProps> = ({
   onFilterChange,
   counts,
 }) => {
-  const tabs: Array<{ id: GalleryFilter; label: string; count: number }> = [
-    { id: 'all', label: 'All', count: counts.all },
-    { id: 'inUse', label: 'In Use', count: counts.inUse },
-    { id: 'orphan', label: 'Orphan', count: counts.orphan },
+  const tabs: Array<{ id: GalleryFilter; labelKey: 'filter.all' | 'filter.inUse' | 'filter.orphan'; count: number }> = [
+    { id: 'all', labelKey: 'filter.all', count: counts.all },
+    { id: 'inUse', labelKey: 'filter.inUse', count: counts.inUse },
+    { id: 'orphan', labelKey: 'filter.orphan', count: counts.orphan },
   ];
 
   return (
@@ -34,7 +35,7 @@ export const FilterTabs: React.FC<FilterTabsProps> = ({
           }}
           className={`filter-tab ${filter === tab.id ? 'active' : ''}`}
         >
-          <span style={styles.label}>{tab.label}</span>
+          <span style={styles.label}>{t(tab.labelKey)}</span>
           <span
             style={{
               ...styles.count,

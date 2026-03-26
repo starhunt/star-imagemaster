@@ -41,6 +41,9 @@ export type DuplicateAction =
 // ============================================
 
 export interface ImageMasterSettings {
+  // Language
+  language: 'auto' | 'en' | 'ko';
+
   // Storage Location
   storageMode: StorageMode;
   imageFolderSuffix: string;      // Default: "_img"
@@ -75,6 +78,9 @@ export interface ImageMasterSettings {
 }
 
 export const DEFAULT_SETTINGS: ImageMasterSettings = {
+  // Language
+  language: 'auto',
+
   // Storage Location
   storageMode: 'folderBased',
   imageFolderSuffix: '_img',
