@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
+import { FixedSizeGrid, GridChildComponentProps } from 'react-window';
 import { ImageInfo } from '../../types';
 import { t } from '../../i18n';
 
@@ -14,11 +15,7 @@ interface ImageGridProps {
   getResourcePath: (path: string) => string;
 }
 
-const THUMBNAIL_SIZES = {
-  small: 80,
-  medium: 120,
-  large: 160,
-};
+const GAP = 8;
 
 export const ImageGrid: React.FC<ImageGridProps> = ({
   images,
@@ -30,7 +27,32 @@ export const ImageGrid: React.FC<ImageGridProps> = ({
   thumbnailSize,
   getResourcePath,
 }) => {
-  const size = THUMBNAIL_SIZES[thumbnailSize];
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerSize, setContainerSize] = useState({ width: 400, height: 400 });
+
+  // 컨테이너 크기 측정
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      setContainerSize({
+        width: el.clientWidth,
+        height: el.clientHeight,
+      });
+    };
+
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const rowCount = Math.ceil(images.length / columns);
+  // 셀 크기 계산: 패딩 8px 양쪽 + 갭
+  const cellWidth = Math.floor((containerSize.width - GAP * 2 - GAP * (columns - 1)) / columns);
+  const cellHeight = cellWidth; // 1:1 비율
 
   const handleClick = useCallback(
     (e: React.MouseEvent, image: ImageInfo, index: number) => {
@@ -89,27 +111,33 @@ export const ImageGrid: React.FC<ImageGridProps> = ({
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  return (
-    <div
-      className="image-grid"
-      style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap: '8px',
-        padding: '8px',
-      }}
-    >
-      {images.map((image, index) => {
-        const isSelected = selectedPaths.has(image.path);
-        return (
+  // react-window 셀 렌더러
+  const Cell = useCallback(
+    ({ columnIndex, rowIndex, style }: GridChildComponentProps) => {
+      const index = rowIndex * columns + columnIndex;
+      if (index >= images.length) return null;
+
+      const image = images[index];
+      const isSelected = selectedPaths.has(image.path);
+
+      return (
+        <div
+          style={{
+            ...style,
+            // 셀 내부 패딩/갭 조정
+            left: Number(style.left) + GAP,
+            top: Number(style.top) + GAP,
+            width: Number(style.width) - GAP,
+            height: Number(style.height) - GAP,
+          }}
+        >
           <div
-            key={image.path}
             className={`image-grid-item ${isSelected ? 'selected' : ''} ${
               image.isOrphan ? 'orphan' : ''
             }`}
             style={{
               width: '100%',
-              aspectRatio: '1',
+              height: '100%',
               cursor: 'pointer',
               position: 'relative',
               borderRadius: '4px',
@@ -230,8 +258,31 @@ export const ImageGrid: React.FC<ImageGridProps> = ({
               </div>
             </div>
           </div>
-        );
-      })}
+        </div>
+      );
+    },
+    [images, selectedPaths, columns, handleClick, handleDoubleClick, handleKeyDown, onDragStart, getResourcePath]
+  );
+
+  return (
+    <div
+      ref={containerRef}
+      className="image-grid"
+      style={{ flex: 1, overflow: 'hidden' }}
+    >
+      {containerSize.width > 0 && containerSize.height > 0 && (
+        <FixedSizeGrid
+          columnCount={columns}
+          columnWidth={cellWidth + GAP}
+          rowCount={rowCount}
+          rowHeight={cellHeight + GAP}
+          width={containerSize.width}
+          height={containerSize.height}
+          overscanRowCount={3}
+        >
+          {Cell}
+        </FixedSizeGrid>
+      )}
 
       <style>{`
         .image-grid-item:hover .image-grid-item-overlay {

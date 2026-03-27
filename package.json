@@ -21,6 +21,7 @@
     "@types/node": "^20.10.0",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
+    "@types/react-window": "^1.8.8",
     "builtin-modules": "^3.3.0",
     "esbuild": "0.19.11",
     "obsidian": "latest",

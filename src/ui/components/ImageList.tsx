@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { ImageInfo, SortField, SortOrder } from '../../types';
 import { t } from '../../i18n';
 
@@ -15,6 +16,8 @@ interface ImageListProps {
   onSortChange: (field: SortField) => void;
   getResourcePath: (path: string) => string;
 }
+
+const ROW_HEIGHT = 44;
 
 const formatFileSize = (bytes: number): string => {
   if (bytes < 1024) return `${bytes} B`;
@@ -82,6 +85,26 @@ export const ImageList: React.FC<ImageListProps> = ({
   onSortChange,
   getResourcePath,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerHeight, setContainerHeight] = useState(400);
+
+  // 컨테이너 높이 측정
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      // 헤더 높이(약 36px) 제외
+      setContainerHeight(el.clientHeight - 36);
+    };
+
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   // Calculate selection state for header checkbox
   const allSelected = images.length > 0 && images.every(img => selectedPaths.has(img.path));
   const someSelected = images.some(img => selectedPaths.has(img.path));
@@ -105,7 +128,6 @@ export const ImageList: React.FC<ImageListProps> = ({
   const handleCheckboxChange = useCallback(
     (e: React.MouseEvent, image: ImageInfo, index: number) => {
       e.stopPropagation();
-      // Simulate ctrl+click for checkbox
       const syntheticEvent = {
         ...e,
         ctrlKey: true,
@@ -116,114 +138,128 @@ export const ImageList: React.FC<ImageListProps> = ({
     [onImageSelect]
   );
 
-  return (
-    <div className="image-list-container">
-      <table className="image-list">
-        <thead>
-          <tr>
-            <th className="list-header-cell checkbox-cell" style={{ width: '40px' }}>
-              <input
-                type="checkbox"
-                checked={allSelected}
-                ref={(el) => {
-                  if (el) el.indeterminate = isIndeterminate;
-                }}
-                onChange={handleSelectAllChange}
-                className="select-all-checkbox"
-                title={allSelected ? t('action.deselectAll') : t('action.selectAll')}
+  // react-window 행 렌더러
+  const Row = useCallback(
+    ({ index, style }: ListChildComponentProps) => {
+      const image = images[index];
+      const isSelected = selectedPaths.has(image.path);
+
+      return (
+        <div
+          style={style}
+          className={`image-list-row ${isSelected ? 'selected' : ''} ${image.isOrphan ? 'orphan' : ''}`}
+          onClick={(e) => handleRowClick(e, image, index)}
+          onDoubleClick={() => onImageDoubleClick(image)}
+        >
+          <div className="list-cell checkbox-cell" style={{ width: '40px' }}>
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={() => {}}
+              onClick={(e) => handleCheckboxChange(e as unknown as React.MouseEvent, image, index)}
+              className="row-checkbox"
+            />
+          </div>
+          <div className="list-cell thumbnail-cell" style={{ width: '50px' }}>
+            <div className="list-thumbnail">
+              <img
+                src={getResourcePath(image.path)}
+                alt={image.name}
+                loading="lazy"
               />
-            </th>
-            <th className="list-header-cell thumbnail-cell" style={{ width: '50px' }}>
-              {/* Thumbnail column */}
-            </th>
-            <SortHeader
-              label={t('list.name')}
-              field="name"
-              currentField={sortField}
-              currentOrder={sortOrder}
-              onClick={onSortChange}
-            />
-            <SortHeader
-              label={t('list.folder')}
-              field="path"
-              currentField={sortField}
-              currentOrder={sortOrder}
-              onClick={onSortChange}
-              width="150px"
-            />
-            <SortHeader
-              label={t('list.size')}
-              field="size"
-              currentField={sortField}
-              currentOrder={sortOrder}
-              onClick={onSortChange}
-              width="80px"
-            />
-            <SortHeader
-              label={t('list.created')}
-              field="created"
-              currentField={sortField}
-              currentOrder={sortOrder}
-              onClick={onSortChange}
-              width="100px"
-            />
-            <th className="list-header-cell" style={{ width: '70px' }}>
-              {t('list.status')}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {images.map((image, index) => {
-            const isSelected = selectedPaths.has(image.path);
-            return (
-              <tr
-                key={image.path}
-                className={`image-list-row ${isSelected ? 'selected' : ''} ${image.isOrphan ? 'orphan' : ''}`}
-                onClick={(e) => handleRowClick(e, image, index)}
-                onDoubleClick={() => onImageDoubleClick(image)}
-              >
-                <td className="list-cell checkbox-cell">
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={() => {}}
-                    onClick={(e) => handleCheckboxChange(e as unknown as React.MouseEvent, image, index)}
-                    className="row-checkbox"
-                  />
-                </td>
-                <td className="list-cell thumbnail-cell">
-                  <div className="list-thumbnail">
-                    <img
-                      src={getResourcePath(image.path)}
-                      alt={image.name}
-                      loading="lazy"
-                    />
-                  </div>
-                </td>
-                <td className="list-cell name-cell" title={image.name}>
-                  <span className="image-name">{image.name}</span>
-                </td>
-                <td className="list-cell folder-cell" title={getFolderPath(image.path)}>
-                  <span className="folder-path">{getFolderPath(image.path)}</span>
-                </td>
-                <td className="list-cell size-cell">
-                  {formatFileSize(image.size)}
-                </td>
-                <td className="list-cell date-cell">
-                  {formatDate(image.created)}
-                </td>
-                <td className="list-cell status-cell">
-                  {image.isOrphan ? (
-                    <span className="status-badge orphan">{t('list.orphan')}</span>
-                  ) : (
-                    <span className="status-badge in-use">{t('list.inUse')}</span>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </div>
+          </div>
+          <div className="list-cell name-cell" title={image.name} style={{ flex: 1 }}>
+            <span className="image-name">{image.name}</span>
+          </div>
+          <div className="list-cell folder-cell" title={getFolderPath(image.path)} style={{ width: '150px' }}>
+            <span className="folder-path">{getFolderPath(image.path)}</span>
+          </div>
+          <div className="list-cell size-cell" style={{ width: '80px' }}>
+            {formatFileSize(image.size)}
+          </div>
+          <div className="list-cell date-cell" style={{ width: '100px' }}>
+            {formatDate(image.created)}
+          </div>
+          <div className="list-cell status-cell" style={{ width: '70px' }}>
+            {image.isOrphan ? (
+              <span className="status-badge orphan">{t('list.orphan')}</span>
+            ) : (
+              <span className="status-badge in-use">{t('list.inUse')}</span>
+            )}
+          </div>
+        </div>
+      );
+    },
+    [images, selectedPaths, handleRowClick, onImageDoubleClick, handleCheckboxChange, getResourcePath]
+  );
+
+  return (
+    <div ref={containerRef} className="image-list-container" style={{ flex: 1, overflow: 'hidden' }}>
+      {/* 고정 헤더 */}
+      <div className="image-list-header">
+        <div className="list-header-cell checkbox-cell" style={{ width: '40px' }}>
+          <input
+            type="checkbox"
+            checked={allSelected}
+            ref={(el) => {
+              if (el) el.indeterminate = isIndeterminate;
+            }}
+            onChange={handleSelectAllChange}
+            className="select-all-checkbox"
+            title={allSelected ? t('action.deselectAll') : t('action.selectAll')}
+          />
+        </div>
+        <div className="list-header-cell thumbnail-cell" style={{ width: '50px' }} />
+        <div
+          className={`list-header-cell sortable ${sortField === 'name' ? 'active' : ''}`}
+          onClick={() => onSortChange('name')}
+          style={{ flex: 1 }}
+        >
+          <span>{t('list.name')}</span>
+          {sortField === 'name' && <span className="sort-indicator">{sortOrder === 'asc' ? '↑' : '↓'}</span>}
+        </div>
+        <div
+          className={`list-header-cell sortable ${sortField === 'path' ? 'active' : ''}`}
+          onClick={() => onSortChange('path')}
+          style={{ width: '150px' }}
+        >
+          <span>{t('list.folder')}</span>
+          {sortField === 'path' && <span className="sort-indicator">{sortOrder === 'asc' ? '↑' : '↓'}</span>}
+        </div>
+        <div
+          className={`list-header-cell sortable ${sortField === 'size' ? 'active' : ''}`}
+          onClick={() => onSortChange('size')}
+          style={{ width: '80px' }}
+        >
+          <span>{t('list.size')}</span>
+          {sortField === 'size' && <span className="sort-indicator">{sortOrder === 'asc' ? '↑' : '↓'}</span>}
+        </div>
+        <div
+          className={`list-header-cell sortable ${sortField === 'created' ? 'active' : ''}`}
+          onClick={() => onSortChange('created')}
+          style={{ width: '100px' }}
+        >
+          <span>{t('list.created')}</span>
+          {sortField === 'created' && <span className="sort-indicator">{sortOrder === 'asc' ? '↑' : '↓'}</span>}
+        </div>
+        <div className="list-header-cell" style={{ width: '70px' }}>
+          {t('list.status')}
+        </div>
+      </div>
+
+      {/* 가상화된 행 목록 */}
+      {containerHeight > 0 && (
+        <FixedSizeList
+          itemCount={images.length}
+          itemSize={ROW_HEIGHT}
+          height={Math.max(containerHeight, 100)}
+          width="100%"
+          overscanCount={10}
+        >
+          {Row}
+        </FixedSizeList>
+      )}
     </div>
   );
 };
