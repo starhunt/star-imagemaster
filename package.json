@@ -1,7 +1,7 @@
 {
   "name": "star-imagemaster",
-  "version": "0.2.8",
-  "description": "Manage Obsidian images with auto-save, gallery view, duplicate detection, smart delete, and link updates.",
+  "version": "0.2.9",
+  "description": "Manage vault images with auto-save, gallery view, duplicate detection, smart delete, and link updates.",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
