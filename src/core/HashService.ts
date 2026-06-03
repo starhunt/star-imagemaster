@@ -27,7 +27,6 @@ export class HashService {
       if (await this.plugin.app.vault.adapter.exists(cachePath)) {
         const content = await this.plugin.app.vault.adapter.read(cachePath);
         this.cache = JSON.parse(content);
-        console.log(`Loaded hash cache with ${Object.keys(this.cache).length} entries`);
       }
     } catch (error) {
       console.error('Failed to load hash cache:', error);
@@ -168,7 +167,6 @@ export class HashService {
     }
 
     await this.saveCache();
-    console.log(`Rebuilt hash cache with ${Object.keys(this.cache).length} entries`);
   }
 
   /**

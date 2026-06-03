@@ -197,3 +197,11 @@ MIT License
 버그 리포트, 기능 제안, PR 환영합니다.
 - [Issues](https://github.com/starhunt/star-imagemaster/issues)
 - [Pull Requests](https://github.com/starhunt/star-imagemaster/pulls)
+
+## Privacy and network use
+
+Star ImageMaster works with image files inside your Obsidian vault. It does not require an account, does not call external services, and does not collect telemetry.
+
+## License
+
+MIT License. See [LICENSE](./LICENSE).

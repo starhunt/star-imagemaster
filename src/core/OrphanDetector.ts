@@ -34,7 +34,6 @@ export class OrphanDetector {
       }
     }
 
-    console.log(`Found ${orphans.length} orphan images out of ${allImages.length} total`);
 
     // Handle orphans based on settings
     if (this.plugin.settings.orphanHandling === 'moveToFolder' && orphans.length > 0) {

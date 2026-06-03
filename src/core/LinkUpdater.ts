@@ -31,7 +31,6 @@ export class LinkUpdater {
     }
 
     if (updatedCount > 0) {
-      console.log(`Updated ${updatedCount} note(s) with new image path: ${newPath}`);
     }
 
     return updatedCount;

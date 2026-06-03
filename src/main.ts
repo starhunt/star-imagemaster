@@ -22,7 +22,6 @@ export default class ImageMasterPlugin extends Plugin {
   orphanDetector: OrphanDetector;
 
   async onload() {
-    console.log('Loading Star ImageMaster plugin');
 
     // Load settings
     await this.loadSettings();
@@ -80,11 +79,9 @@ export default class ImageMasterPlugin extends Plugin {
     // Load hash cache on startup
     await this.hashService.loadCache();
 
-    console.log('Star ImageMaster plugin loaded');
   }
 
   onunload() {
-    console.log('Unloading Star ImageMaster plugin');
 
     // Save hash cache
     this.hashService.saveCache();
